@@ -36,6 +36,11 @@
 # [*labels*]
 #   Not required.  Single string of whitespace-separated list of labels to be assigned for this slave.
 #
+# [*mode*]
+#   The mode controlling how Jenkins allocates jobs to slaves. Can be either
+#   'normal' (utilize this slave as much as possible) or 'exclusive' (leave
+#   this machine for tied jobs only). Default is normal.
+#
 # [*jave_version*]
 #   Specified which version of java will be used.
 #
@@ -66,6 +71,7 @@ class jenkins::slave (
   $slave_uid         = undef,
   $slave_home        = '/home/jenkins-slave',
   $labels            = undef,
+  $mode              = 'normal',
   $install_java      = $jenkins::params::install_java,
   $enable            = true
 ) inherits jenkins::params {
@@ -133,6 +139,8 @@ class jenkins::slave (
   } else {
     $labels_flag = ''
   }
+
+  $mode_flag = "-mode \"${mode}\""
 
   file { '/etc/init.d/jenkins-slave':
       ensure  => 'file',
